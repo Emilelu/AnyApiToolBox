@@ -123,6 +123,10 @@ public class Functions {
 		}
 		try (Scanner getInfos = new Scanner(System.in)) {
 			int times = getInfos.nextInt();
+			if (times <= 0) {
+				System.out.println("那您怕不是看个寂寞XD");
+				System.exit(0);
+			}
 			for (int i = 0; i < times; i++) {
 				getContent(theAPI);
 			}
