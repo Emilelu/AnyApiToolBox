@@ -7,6 +7,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Scanner;
@@ -140,7 +141,7 @@ public class Functions {
 		try {
 			URL url = new URL(link);
 			InputStream in = url.openStream();
-			InputStreamReader isr = new InputStreamReader(in);
+			InputStreamReader isr = new InputStreamReader(in, Charset.forName("UTF-8"));
 			BufferedReader br = new BufferedReader(isr);
 			System.out.println(br.readLine() + "\n");
 		} catch (Exception e) {
