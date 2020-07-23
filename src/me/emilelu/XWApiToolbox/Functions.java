@@ -42,8 +42,12 @@ public class Functions {
 				if (!inputPath.endsWith("/")) {
 					if (inputPath.endsWith(":")) {
 						inputPath = inputPath + "/";
-					} else {
+					}
+					if (inputPath.length() == 1) {
 						inputPath = inputPath + ":/";
+					}
+					if (!inputPath.endsWith("/")) {
+						inputPath = inputPath + "/";
 					}
 					System.out.println("程序已尝试自动纠正路径，现在的路径是 " + inputPath + "，请确认是否无误(y/n)。");
 					String isCorrect = getInfos.next();
@@ -74,9 +78,10 @@ public class Functions {
 				}
 			}
 			File targetFile = new File(inputPath);
-			if (!targetFile.exists() && targetFile.isDirectory()) {
+			if (!targetFile.exists()) {
 				targetFile.mkdirs();
-			} else if (targetFile.isDirectory()) {
+			}
+			if (targetFile.isDirectory()) {
 				// CONTINUE
 			} else {
 				System.out.println("路径异常。");
@@ -86,7 +91,7 @@ public class Functions {
 
 			for (int i = 0; i < times; i++) {
 				SimpleDateFormat df = new SimpleDateFormat("yy.MM.dd-HH.mm.ss.SSS");
-				String filename = targetFile + df.format(new Date()) + ".png";
+				String filename = inputPath + df.format(new Date()) + ".png";
 				downloadFile(theAPI, filename);
 				System.out.println("下载第 " + (i + 1) + " 张壁纸完成，文件已存至 " + filename + "。");
 			}
