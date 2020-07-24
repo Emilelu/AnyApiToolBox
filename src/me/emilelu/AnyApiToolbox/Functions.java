@@ -108,12 +108,12 @@ public class Functions {
 			}
 
 			if (what == 6 || what == 7 || what == 8) {
-				System.out.println("如果您需要下载手机壁纸，请输入 1。电脑壁纸则输入任意字符。");
+				System.out.println("如果您需要下载电脑壁纸，请输入 1。手机壁纸则输入除 1 外的任意字符。");
 				String wp = getInfos.next();
 				if (wp.equals("1")) {
-					theAPI = theAPI + "&method=mobile";
-				} else {
 					// CONTINUE
+				} else {
+					theAPI = theAPI + "&method=mobile";
 				}
 			}
 
