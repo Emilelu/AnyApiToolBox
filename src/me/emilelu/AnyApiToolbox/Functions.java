@@ -30,14 +30,14 @@ public class Functions {
 		System.out.println("首先，请输入您的 APIKEY，若无请去按照页面指引进行申请，或者输入 n，但会有诸多限制。（例如调用次数极少）");
 
 		try (Scanner getInfo = new Scanner(System.in)) {
-			String apiKey = getInfo.nextLine();
+			String apiKey = getInfo.next();
 			if (apiKey.equals("n")) {
 				theAPI = theAPI + "?";
 			} else {
 				theAPI = theAPI + "?apikey=" + apiKey;
 			}
 			System.out.println("您要获取何种类型的图片？0.全年龄 || 1.R18 || 2.混合");
-			String type = getInfo.nextLine();
+			String type = getInfo.next();
 			if (type.equals("0")) {
 				theAPI = theAPI + "&r18=0";
 			} else if (type.equals("1")) {
@@ -45,7 +45,10 @@ public class Functions {
 			} else {
 				theAPI = theAPI + "&r18=2";
 			}
-			System.out.println("是否要指定图片关键字？是则输入要指定的关键字，否则输入n\n若指定关键字，将会返回从插画标题、作者、标签中模糊搜索的结果。");
+			System.out.println("是否要指定图片关键字？是则输入要指定的关键字，否则输入 n");
+			System.out.println("若指定关键字，将会返回从插画标题、作者、标签中模糊搜索的结果。");
+			@SuppressWarnings("unused")
+			String fucknextline = getInfo.nextLine();
 			String key = getInfo.nextLine();
 			if (!key.equals("n")) {
 				key = URLEncoder.encode(key, "UTF-8");
@@ -54,14 +57,14 @@ public class Functions {
 				// CONTINUE
 			}
 			System.out.println("是否使用 master_1200 缩略图？(y/n) 即长或宽最大为 1200px 的缩略图，以节省流量或提升加载速度（某些原图的大小可以达到十几MB）");
-			String size1200 = getInfo.nextLine();
+			String size1200 = getInfo.next();
 			if (size1200.equals("y")) {
 				theAPI = theAPI + "&size1200=true";
 			} else {
 				// CONTINUE
 			}
 			System.out.println("是否在下载过程中输出图片信息并保存为 txt（标题、作者、链接、标签）？(y/n)");
-			String outputDetails = getInfo.nextLine();
+			String outputDetails = getInfo.next();
 			boolean isDetails = false;
 			if (outputDetails.equals("y")) {
 				isDetails = true;
@@ -76,7 +79,7 @@ public class Functions {
 				System.exit(0);
 			}
 			System.out.println("保存的路径是？（务必输入绝对路径，准确无误，以 / 结尾！若对应文件夹不存在则会自动建立。）");
-			String inputPath = getInfo.nextLine();
+			String inputPath = getInfo.next();
 			inputPath = fixPath(inputPath);
 			diretoryDetector(inputPath, getInfo);
 
@@ -227,7 +230,7 @@ public class Functions {
 
 	public static void diretoryDetector(String inputPath, Scanner getInfos) {
 		System.out.println("现在的路径是 " + inputPath + "，请确认是否无误(y/n)。");
-		String isCorrect = getInfos.nextLine();
+		String isCorrect = getInfos.next();
 		if (isCorrect.equals("y")) {
 			// CONTINUE
 		} else {
@@ -277,7 +280,7 @@ public class Functions {
 		try (Scanner getInfos = new Scanner(System.in)) {
 			if (what == 114514) {
 				System.out.println("请输入自定义的 API 以批量下载壁纸。");
-				theAPI = getInfos.nextLine();
+				theAPI = getInfos.next();
 				System.out.println("您要下载几张壁纸？");
 			}
 
@@ -289,7 +292,7 @@ public class Functions {
 
 			if (what == 6 || what == 7 || what == 8) {
 				System.out.println("如果您需要下载电脑壁纸，请输入 1。手机壁纸则输入除 1 外的任意字符。");
-				String wp = getInfos.nextLine();
+				String wp = getInfos.next();
 				if (wp.equals("1")) {
 					// CONTINUE
 				} else {
@@ -298,7 +301,7 @@ public class Functions {
 			}
 
 			System.out.println("保存的路径是？（务必输入绝对路径，准确无误，以 / 结尾！若对应文件夹不存在则会自动建立。）");
-			String inputPath = new String(getInfos.nextLine());
+			String inputPath = getInfos.next();
 
 			inputPath = fixPath(inputPath);
 			diretoryDetector(inputPath, getInfos);
@@ -381,7 +384,7 @@ public class Functions {
 		try (Scanner getInfos = new Scanner(System.in)) {
 			if (what == 114514) {
 				System.out.println("请输入自定义的 API 以批量输出文本。");
-				theAPI = getInfos.nextLine();
+				theAPI = getInfos.next();
 				System.out.println("您要输出几句文本？");
 			}
 
@@ -392,10 +395,10 @@ public class Functions {
 			}
 
 			System.out.println("您是否要将输出的内容保存为 txt？(y/n)");
-			String isTXT = getInfos.nextLine();
+			String isTXT = getInfos.next();
 			if (isTXT.equals("y")) {
 				System.out.println("保存的路径是？（务必输入绝对路径，准确无误，以 / 结尾！若对应文件夹不存在则会自动建立。）");
-				String inputPath = new String(getInfos.nextLine());
+				String inputPath = getInfos.next();
 
 				inputPath = fixPath(inputPath);
 				diretoryDetector(inputPath, getInfos);
@@ -443,10 +446,10 @@ public class Functions {
 				System.out.println("那您怕不是生成个寂寞XD");
 			}
 			System.out.print("请输入文本内容：");
-			String text = getInfos.nextLine();
+			String text = getInfos.next();
 			String theAPI = "http://api.btstu.cn/qrcode/api.php?text=" + text + "&size=" + size;
 			System.out.println("保存的路径是？（务必输入绝对路径，准确无误，以 / 结尾！若对应文件夹不存在则会自动建立。）");
-			String inputPath = new String(getInfos.nextLine());
+			String inputPath = getInfos.next();
 
 			inputPath = fixPath(inputPath);
 			diretoryDetector(inputPath, getInfos);
@@ -465,7 +468,7 @@ public class Functions {
 	public static void custom() {
 		System.out.println("您要自定义 1. 壁纸下载 还是 2. 文本输出 的 URL？");
 		try (Scanner getInfo = new Scanner(System.in)) {
-			String theInfo = getInfo.nextLine();
+			String theInfo = getInfo.next();
 			if (theInfo.equals("1")) {
 				getWallpaper(114514);
 			} else {
