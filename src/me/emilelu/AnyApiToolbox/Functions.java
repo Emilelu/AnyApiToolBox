@@ -102,6 +102,11 @@ public class Functions {
 				line = line.replace("\\", "");
 				line = line.replace("\"", "");
 
+				if (line.contains("没有符合条件的色图")) {
+					System.out.println("没有符合条件的色图");
+					System.exit(0);
+				}
+
 				// Define the pattern
 				String pattern = "(title:.*,url)|(http.*jpg|http.*png)|(tags:\\[.*\\])";
 
