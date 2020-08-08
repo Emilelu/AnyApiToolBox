@@ -8,15 +8,166 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintStream;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Functions {
+
+	public static void Lolicon() {
+		String theAPI = "https://api.lolicon.app/setu/index.php";
+
+		System.out.println("欢迎使用 Lolicon API 提供的 随机色图功能。");
+		System.out.println("如果您是首次使用本 API，请访问 https://api.lolicon.app/#/setu 仔细阅读页面内容！");
+		System.out.println("首先，请输入您的 APIKEY，若无请去按照页面指引进行申请，或者输入 n，但会有诸多限制。（例如调用次数极少）");
+
+		try (Scanner getInfo = new Scanner(System.in)) {
+			String apiKey = getInfo.next();
+			if (apiKey.equals("n")) {
+				theAPI = theAPI + "?";
+			} else {
+				theAPI = theAPI + "?apikey=" + apiKey;
+			}
+			System.out.println("您要获取何种类型的图片？0.全年龄 || 1.R18 || 2.混合");
+			String type = getInfo.next();
+			if (type.equals("0")) {
+				theAPI = theAPI + "&r18=0";
+			} else if (type.equals("1")) {
+				theAPI = theAPI + "&r18=1";
+			} else {
+				theAPI = theAPI + "&r18=2";
+			}
+			System.out.println("是否要指定图片关键字？是则输入要指定的关键字，否则输入n\n若指定关键字，将会返回从插画标题、作者、标签中模糊搜索的结果。");
+			String key = getInfo.next();
+			if (key.equals("y")) {
+				theAPI = theAPI + "&keyword=" + key;
+			} else {
+				// CONTINUE
+			}
+			System.out.println("是否使用 master_1200 缩略图？(y/n) 即长或宽最大为 1200px 的缩略图，以节省流量或提升加载速度（某些原图的大小可以达到十几MB）");
+			String size1200 = getInfo.next();
+			if (size1200.equals("y")) {
+				theAPI = theAPI + "&size1200=true";
+			} else {
+				// CONTINUE
+			}
+			System.out.println("是否在下载过程中输出图片信息并保存为 txt（标题、作者、链接、标签）？(y/n)");
+			String outputDetails = getInfo.next();
+			boolean isDetails = false;
+			if (outputDetails.equals("y")) {
+				isDetails = true;
+			} else {
+				// CONTINUE
+			}
+//			System.out.println("[Debug] Now the link is " + theAPI);
+			System.out.println("您要下载几张图片？");
+			int times = getInfo.nextInt();
+			if (times <= 0) {
+				System.out.println("那您怕不是下个寂寞XD");
+				System.exit(0);
+			}
+			System.out.println("保存的路径是？（务必输入绝对路径，准确无误，以 / 结尾！若对应文件夹不存在则会自动建立。）");
+			String inputPath = getInfo.next();
+			inputPath = fixPath(inputPath);
+			diretoryDetector(inputPath, getInfo);
+
+			SimpleDateFormat df = new SimpleDateFormat("yy.MM.dd-HH.mm.ss.SSS");
+			String inputPath2 = inputPath + "/HentaiLogs-" + df.format(new Date()) + ".txt";
+			List<String> hentaiLogs = new ArrayList<String>();
+
+			for (int i = 0; i < times; i++) {
+				String line = getContent(theAPI);
+
+				// Judge r18
+				String isR18 = null;
+				if (line.contains("\"r18\":false")) {
+					isR18 = "不是色图";
+				} else {
+					isR18 = "是色图";
+				}
+
+				// Replace \ and " to empty
+				line = line.replace("\\", "");
+				line = line.replace("\"", "");
+
+				// Define the pattern
+				String pattern = "(title:.*,url)|(http.*jpg|http.*png)|(tags:\\[.*\\])";
+
+				// Compile the pattern
+				Pattern r = Pattern.compile(pattern);
+
+				// new Matcher
+				Matcher m = r.matcher(line);
+
+				// Variables
+				int t = 1;
+				String ant = null;
+				String ant2 = null;
+				String url = null;
+				String tags = null;
+				String filename = inputPath;
+
+				// Find
+				while (m.find()) {
+					if (t == 1) {
+						ant = m.group();
+					}
+					if (t == 2) {
+						url = m.group();
+					}
+					if (t == 3) {
+						tags = m.group();
+					}
+					t = t + 1;
+				}
+				ant = ant.replace(",", "");
+				ant = ant.replace("url", "");
+				ant2 = ant;
+				ant = ant.replace("title:", "标题：");
+				ant = ant.replace("author:", "\n作者：");
+				ant2 = ant2.replace("title:", "");
+				ant2 = ant2.replace("author:", " - ");
+				tags = tags.replace("tags:", "标签：");
+				tags = tags.replace("[", "");
+				tags = tags.replace("]}]", "");
+				filename = filename + ant2 + ".jpg";
+				if (isDetails) {
+					String[] log = { "类型：" + isR18, ant, "链接：" + url, tags };
+					for (int j = 0; j < log.length; j++) {
+						System.out.println(log[j]);
+						hentaiLogs.add(log[j]);
+					}
+				}
+				if (url.contains(".png")) {
+					filename.replace(".jpg", ".png");
+				}
+				downloadFile(url, filename);
+				System.out.println("下载第 " + (i + 1) + " 张色图完成，文件已存至 " + filename + "。");
+				System.out.println("——————————");
+				hentaiLogs.add("——————————");
+			}
+			if (isDetails) {
+				FileOutputStream fs = new FileOutputStream(new File(inputPath2));
+				PrintStream p = new PrintStream(fs);
+				for (int j = 0; j < hentaiLogs.size(); j++) {
+					p.println(hentaiLogs.get(j));
+				}
+				fs.close();
+				p.close();
+				System.out.println("所有详细信息已保存至 " + inputPath2 + "。");
+			}
+		} catch (Exception e) {
+			System.out.print("程序异常退出，原因：");
+			e.printStackTrace();
+		}
+	}
 
 	public static String fixPath(String inputPath) {
 		if (!inputPath.endsWith("/")) {
@@ -130,15 +281,21 @@ public class Functions {
 				if (what == 6 || what == 7 || what == 8) {
 					String temp = null;
 					String json = getContent(theAPI);
-					String pattern = "http.*jpg";
+					String pattern = "http.*jpg|http.*png";
 					json = json.replace("\\", "");
 					Pattern r = Pattern.compile(pattern);
 					Matcher m = r.matcher(json);
 					while (m.find()) {
 						temp = m.group();
 					}
+					if (temp.contains(".png")) {
+						filename = filename.replace(".jpg", ".png");
+					}
 					downloadFile(temp, filename);
 				} else {
+					if (theAPI.contains(".png")) {
+						filename = filename.replace(".jpg", ".png");
+					}
 					downloadFile(theAPI, filename);
 				}
 
@@ -153,7 +310,15 @@ public class Functions {
 	public static void downloadFile(String url, String saveAddress) {
 		try {
 			URL fileUrl = new URL(url);
-			InputStream is = fileUrl.openStream();
+			HttpURLConnection conn;
+			InputStream is;
+			if (url.contains("pixiv")) {
+				conn = (HttpURLConnection) fileUrl.openConnection();
+				conn.setRequestProperty("referer", "https://www.pixiv.net/");
+				is = conn.getInputStream();
+			} else {
+				is = fileUrl.openStream();
+			}
 			OutputStream os = new FileOutputStream(saveAddress);
 			byte bf[] = new byte[1024];
 			int length = 0;
@@ -204,15 +369,18 @@ public class Functions {
 
 				inputPath = fixPath(inputPath);
 				diretoryDetector(inputPath, getInfos);
+				SimpleDateFormat df = new SimpleDateFormat("yy.MM.dd-HH.mm.ss.SSS");
+				inputPath = inputPath + "/Sentences-" + df.format(new Date()) + ".txt";
 
-				FileOutputStream fs = new FileOutputStream(new File(inputPath + "/Sentences.txt"));
+				FileOutputStream fs = new FileOutputStream(new File(inputPath));
 				PrintStream p = new PrintStream(fs);
 				for (int i = 0; i < times; i++) {
 					String theSentence = getContent(theAPI);
 					p.println(theSentence);
 					System.out.println(theSentence);
 				}
-				System.out.println("所有语句已保存至 " + inputPath + " 下的 Sentences.txt。");
+				System.out.println("所有语句已保存至 " + inputPath + "。");
+				fs.close();
 				p.close();
 			} else {
 				for (int i = 0; i < times; i++) {
@@ -231,6 +399,9 @@ public class Functions {
 		InputStreamReader isr = new InputStreamReader(in, Charset.forName("UTF-8"));
 		BufferedReader br = new BufferedReader(isr);
 		String theSentense = br.readLine() + "\n";
+		in.close();
+		isr.close();
+		br.close();
 		return theSentense;
 	}
 
