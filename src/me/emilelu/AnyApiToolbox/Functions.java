@@ -88,107 +88,114 @@ public class Functions {
 			List<String> hentaiLogs = new ArrayList<String>();
 
 			for (int i = 0; i < times; i++) {
-				String line = getContent(theAPI);
+				try {
+					String line = getContent(theAPI);
 
-				// Judge r18
-				String isR18 = null;
-				if (line.contains("\"r18\":false")) {
-					isR18 = "不是色图";
-				} else {
-					isR18 = "是色图";
-				}
-
-				// Replace \ and " to empty
-				line = line.replace("\\", "");
-				line = line.replace("\"", "");
-
-				if (line.contains("没有符合条件的色图")) {
-					System.out.println("没有符合条件的色图");
-					System.exit(0);
-				}
-
-				// Define the pattern
-				String pattern = "(title:.*,url)|(http.*jpg|http.*png)|(tags:\\[.*\\])";
-
-				// Compile the pattern
-				Pattern r = Pattern.compile(pattern);
-
-				// new Matcher
-				Matcher m = r.matcher(line);
-
-				// Variables
-				int t = 1;
-				String ant = null;
-				String ant2 = null;
-				String url = null;
-				String tags = null;
-				String filename = inputPath;
-
-				// Find
-				while (m.find()) {
-					if (t == 1) {
-						ant = m.group();
+					// Judge r18
+					String isR18 = null;
+					if (line.contains("\"r18\":false")) {
+						isR18 = "不是色图";
+					} else {
+						isR18 = "是色图";
 					}
-					if (t == 2) {
-						url = m.group();
+
+					// Replace \ and " to empty
+					line = line.replace("\\", "");
+					line = line.replace("\"", "");
+
+					if (line.contains("没有符合条件的色图")) {
+						System.out.println("没有符合条件的色图");
+						System.exit(0);
 					}
-					if (t == 3) {
-						tags = m.group();
+
+					// Define the pattern
+					String pattern = "(title:.*,url)|(http.*jpg|http.*png)|(tags:\\[.*\\])";
+
+					// Compile the pattern
+					Pattern r = Pattern.compile(pattern);
+
+					// new Matcher
+					Matcher m = r.matcher(line);
+
+					// Variables
+					int t = 1;
+					String ant = null;
+					String ant2 = null;
+					String url = null;
+					String tags = null;
+					String filename = inputPath;
+
+					// Find
+					while (m.find()) {
+						if (t == 1) {
+							ant = m.group();
+						}
+						if (t == 2) {
+							url = m.group();
+						}
+						if (t == 3) {
+							tags = m.group();
+						}
+						t = t + 1;
 					}
-					t = t + 1;
-				}
-				ant = ant.replace(",", "");
-				ant = ant.replace("url", "");
-				ant2 = ant;
-				ant = ant.replace("title:", "标题：");
-				ant = ant.replace("author:", "\n作者：");
-				ant2 = ant2.replace("title:", "");
-				ant2 = ant2.replace("author:", " - ");
-				tags = tags.replace("tags:", "标签：");
-				tags = tags.replace("[", "");
-				tags = tags.replace("]}]", "");
-				filename = filename + ant2 + ".jpg";
-				if (isDetails) {
-					String[] log = { "类型：" + isR18, ant, "链接：" + url, tags };
-					for (int j = 0; j < log.length; j++) {
-						System.out.println(log[j]);
-						hentaiLogs.add(log[j]);
+					ant = ant.replace(",", "");
+					ant = ant.replace("url", "");
+					ant2 = ant;
+					ant = ant.replace("title:", "标题：");
+					ant = ant.replace("author:", "\n作者：");
+					ant2 = ant2.replace("title:", "");
+					ant2 = ant2.replace("author:", " - ");
+					tags = tags.replace("tags:", "标签：");
+					tags = tags.replace("[", "");
+					tags = tags.replace("]}]", "");
+					filename = filename + ant2 + ".jpg";
+					if (isDetails) {
+						String[] log = { "类型：" + isR18, ant, "链接：" + url, tags };
+						for (int j = 0; j < log.length; j++) {
+							System.out.println(log[j]);
+							hentaiLogs.add(log[j]);
+						}
+						hentaiLogs.add("——————————");
 					}
-					hentaiLogs.add("——————————");
+					if (url.contains(".png")) {
+						filename.replace(".jpg", ".png");
+					}
+					if (ant2.contains("\\")) {
+						ant2 = ant2.replace("\\", "~");
+					}
+					if (ant2.contains("/")) {
+						ant2 = ant2.replace("/", "~");
+					}
+					if (ant2.contains(":")) {
+						ant2 = ant2.replace(":", "~");
+					}
+					if (ant2.contains("*")) {
+						ant2 = ant2.replace("*", "~");
+					}
+					if (ant2.contains("?")) {
+						ant2 = ant2.replace("?", "~");
+					}
+					if (ant2.contains("\"")) {
+						ant2 = ant2.replace("\"", "~");
+					}
+					if (ant2.contains("<")) {
+						ant2 = ant2.replace("<", "~");
+					}
+					if (ant2.contains(">")) {
+						ant2 = ant2.replace(">", "~");
+					}
+					if (ant2.contains("|")) {
+						ant2 = ant2.replace("|", "~");
+					}
+					downloadFile(url, filename);
+					System.out.println("下载第 " + (i + 1) + " 张色图完成，文件已存至 " + filename + "。");
+					System.out.println("——————————");
+				} catch (Exception e) {
+					System.out.print("下载失败，原因：");
+					e.printStackTrace();
+					System.out.println("正在跳至下一个任务...\n");
+					continue;
 				}
-				if (url.contains(".png")) {
-					filename.replace(".jpg", ".png");
-				}
-				if (ant2.contains("\\")) {
-					ant2 = ant2.replace("\\", "~");
-				}
-				if (ant2.contains("/")) {
-					ant2 = ant2.replace("/", "~");
-				}
-				if (ant2.contains(":")) {
-					ant2 = ant2.replace(":", "~");
-				}
-				if (ant2.contains("*")) {
-					ant2 = ant2.replace("*", "~");
-				}
-				if (ant2.contains("?")) {
-					ant2 = ant2.replace("?", "~");
-				}
-				if (ant2.contains("\"")) {
-					ant2 = ant2.replace("\"", "~");
-				}
-				if (ant2.contains("<")) {
-					ant2 = ant2.replace("<", "~");
-				}
-				if (ant2.contains(">")) {
-					ant2 = ant2.replace(">", "~");
-				}
-				if (ant2.contains("|")) {
-					ant2 = ant2.replace("|", "~");
-				}
-				downloadFile(url, filename);
-				System.out.println("下载第 " + (i + 1) + " 张色图完成，文件已存至 " + filename + "。");
-				System.out.println("——————————");
 			}
 			if (isDetails) {
 				FileOutputStream fs = new FileOutputStream(new File(inputPath2));
@@ -333,7 +340,14 @@ public class Functions {
 					if (theAPI.contains(".png")) {
 						filename = filename.replace(".jpg", ".png");
 					}
-					downloadFile(theAPI, filename);
+					try {
+						downloadFile(theAPI, filename);
+					} catch (Exception e) {
+						System.out.print("下载失败，原因：");
+						e.printStackTrace();
+						System.out.println("正在跳至下一个任务...\n");
+						continue;
+					}
 				}
 
 				System.out.println("下载第 " + (i + 1) + " 张壁纸完成，文件已存至 " + filename + "。");
