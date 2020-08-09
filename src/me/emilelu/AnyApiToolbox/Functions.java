@@ -336,7 +336,14 @@ public class Functions {
 					if (temp.contains(".png")) {
 						filename = filename.replace(".jpg", ".png");
 					}
-					downloadFile(temp, filename);
+					try {
+						downloadFile(temp, filename);
+					} catch (Exception e) {
+						System.out.print("下载失败，原因：");
+						e.printStackTrace();
+						System.out.println("正在跳至下一个任务...\n");
+						continue;
+					}
 				} else {
 					if (theAPI.contains(".png")) {
 						filename = filename.replace(".jpg", ".png");
@@ -478,7 +485,10 @@ public class Functions {
 				System.out.println("那您怕不是生成个寂寞XD");
 			}
 			System.out.print("请输入文本内容：");
-			String text = getInfos.next();
+			@SuppressWarnings("unused")
+			String fucknextline = getInfos.nextLine();
+			String text = getInfos.nextLine();
+			text = URLEncoder.encode(text, "UTF-8");
 			String theAPI = "http://api.btstu.cn/qrcode/api.php?text=" + text + "&size=" + size;
 			System.out.println("保存的路径是？（务必输入绝对路径，准确无误，以 / 结尾！若对应文件夹不存在则会自动建立。）");
 			String inputPath = getInfos.next();
