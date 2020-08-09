@@ -1,11 +1,13 @@
 package me.emilelu.AnyApiToolbox;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class Main {
 
-	public static void main(String[] args) {
-		System.out.println("欢迎使用 AnyApi 工具箱 [Version 0.2.1-beta]");
+	public static void main(String[] args) throws IOException {
+//		System.out.println("[Debug] Now your ip is " + Functions.getContent("https://api.ip.sb/jsonip"));
+		System.out.println("欢迎使用 AnyApi 工具箱 [Version 0.2.2-beta]");
 		System.out.println("目前，本软件接入了 小歪、搏天以及 Lolicon API，使用到了各 API 的部分功能。");
 		System.out.println("本软件的核心功能为「批量」，包括但不限于批量下载、批量输出+保存。");
 		System.out.println("当然，您也可以自行输入一个 URL 来使用功能。");

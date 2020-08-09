@@ -36,7 +36,7 @@ public class Functions {
 			} else {
 				theAPI = theAPI + "?apikey=" + apiKey;
 			}
-			System.out.println("您要获取何种类型的图片？0.全年龄 || 1.R18 || 2.混合");
+			System.out.println("\n您要获取何种类型的图片？0.全年龄 || 1.R18 || 2.混合");
 			String type = getInfo.next();
 			if (type.equals("0")) {
 				theAPI = theAPI + "&r18=0";
@@ -45,7 +45,7 @@ public class Functions {
 			} else {
 				theAPI = theAPI + "&r18=2";
 			}
-			System.out.println("是否要指定图片关键字？是则输入要指定的关键字，否则输入 n");
+			System.out.println("\n是否要指定图片关键字？是则输入要指定的关键字，否则输入 n");
 			System.out.println("若指定关键字，将会返回从插画标题、作者、标签中模糊搜索的结果。");
 			@SuppressWarnings("unused")
 			String fucknextline = getInfo.nextLine();
@@ -56,14 +56,14 @@ public class Functions {
 			} else {
 				// CONTINUE
 			}
-			System.out.println("是否使用 master_1200 缩略图？(y/n) 即长或宽最大为 1200px 的缩略图，以节省流量或提升加载速度（某些原图的大小可以达到十几MB）");
+			System.out.println("\n是否使用 master_1200 缩略图？(y/n) 即长或宽最大为 1200px 的缩略图，以节省流量或提升加载速度（某些原图的大小可以达到十几MB）");
 			String size1200 = getInfo.next();
 			if (size1200.equals("y")) {
 				theAPI = theAPI + "&size1200=true";
 			} else {
 				// CONTINUE
 			}
-			System.out.println("是否在下载过程中输出图片信息并保存为 txt（标题、作者、链接、标签）？(y/n)");
+			System.out.println("\n是否在下载过程中输出图片信息并保存为 txt（标题、作者、链接、标签）？(y/n)");
 			String outputDetails = getInfo.next();
 			boolean isDetails = false;
 			if (outputDetails.equals("y")) {
@@ -71,14 +71,14 @@ public class Functions {
 			} else {
 				// CONTINUE
 			}
-			System.out.println("[Debug] Now the link is " + theAPI);
-			System.out.println("您要下载几张图片？");
+//			System.out.println("\n[Debug] Now the link is " + theAPI);
+			System.out.println("\n您要下载几张图片？");
 			int times = getInfo.nextInt();
 			if (times <= 0) {
 				System.out.println("那您怕不是下个寂寞XD");
 				System.exit(0);
 			}
-			System.out.println("保存的路径是？（务必输入绝对路径，准确无误，以 / 结尾！若对应文件夹不存在则会自动建立。）");
+			System.out.println("\n保存的路径是？（务必输入绝对路径，准确无误，以 / 结尾！若对应文件夹不存在则会自动建立。）");
 			String inputPath = getInfo.next();
 			inputPath = fixPath(inputPath);
 			diretoryDetector(inputPath, getInfo);
@@ -148,7 +148,6 @@ public class Functions {
 					tags = tags.replace("tags:", "标签：");
 					tags = tags.replace("[", "");
 					tags = tags.replace("]}]", "");
-					filename = filename + ant2 + ".jpg";
 					if (isDetails) {
 						String[] log = { "类型：" + isR18, ant, "链接：" + url, tags };
 						for (int j = 0; j < log.length; j++) {
@@ -156,9 +155,6 @@ public class Functions {
 							hentaiLogs.add(log[j]);
 						}
 						hentaiLogs.add("——————————");
-					}
-					if (url.contains(".png")) {
-						filename.replace(".jpg", ".png");
 					}
 					if (ant2.contains("\\")) {
 						ant2 = ant2.replace("\\", "~");
@@ -187,6 +183,11 @@ public class Functions {
 					if (ant2.contains("|")) {
 						ant2 = ant2.replace("|", "~");
 					}
+					filename = filename + ant2 + ".jpg";
+					if (url.contains(".png")) {
+						filename.replace(".jpg", ".png");
+					}
+//					System.out.println("[Debug] Now the filename is " + filename);
 					downloadFile(url, filename);
 					System.out.println("下载第 " + (i + 1) + " 张色图完成，文件已存至 " + filename + "。");
 					System.out.println("——————————");
@@ -361,16 +362,11 @@ public class Functions {
 	public static void downloadFile(String url, String saveAddress) {
 		try {
 			URL fileUrl = new URL(url);
-			HttpURLConnection conn;
-			InputStream is;
-			if (url.contains("pixiv")) {
-				conn = (HttpURLConnection) fileUrl.openConnection();
-				conn.setRequestProperty("referer", "https://www.pixiv.net/");
-				conn.setRequestMethod("GET");
-				is = conn.getInputStream();
-			} else {
-				is = fileUrl.openStream();
-			}
+			HttpURLConnection conn = (HttpURLConnection) fileUrl.openConnection();
+			conn.setRequestMethod("GET");
+			conn.setRequestProperty("User-Agent",
+					"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4217.0 Safari/537.36 Edg/86.0.601.0");
+			InputStream is = conn.getInputStream();
 			OutputStream os = new FileOutputStream(saveAddress);
 			byte bf[] = new byte[1024];
 			int length = 0;
@@ -427,16 +423,30 @@ public class Functions {
 				FileOutputStream fs = new FileOutputStream(new File(inputPath));
 				PrintStream p = new PrintStream(fs);
 				for (int i = 0; i < times; i++) {
-					String theSentence = getContent(theAPI);
-					p.println(theSentence);
-					System.out.println(theSentence);
+					try {
+						String theSentence = getContent(theAPI);
+						p.println(theSentence);
+						System.out.println(theSentence);
+					} catch (Exception e) {
+						System.out.print("获取失败，原因：");
+						e.printStackTrace();
+						System.out.println("正在跳至下一个任务...\n");
+						continue;
+					}
 				}
 				System.out.println("所有语句已保存至 " + inputPath + "。");
 				fs.close();
 				p.close();
 			} else {
 				for (int i = 0; i < times; i++) {
-					System.out.println(getContent(theAPI));
+					try {
+						System.out.println(getContent(theAPI));
+					} catch (Exception e) {
+						System.out.print("获取失败，原因：");
+						e.printStackTrace();
+						System.out.println("正在跳至下一个任务...\n");
+						continue;
+					}
 				}
 			}
 		} catch (Exception e) {
@@ -447,7 +457,10 @@ public class Functions {
 
 	public static String getContent(String link) throws IOException {
 		URL url = new URL(link);
-		InputStream in = url.openStream();
+		HttpURLConnection mlgb = (HttpURLConnection) url.openConnection();
+		mlgb.setRequestProperty("User-Agent",
+				"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4217.0 Safari/537.36 Edg/86.0.601.0");
+		InputStream in = mlgb.getInputStream();
 		InputStreamReader isr = new InputStreamReader(in, Charset.forName("UTF-8"));
 		BufferedReader br = new BufferedReader(isr);
 		String theSentense = br.readLine() + "\n";
