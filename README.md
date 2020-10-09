@@ -4,6 +4,8 @@
 当然，您也可以自行输入一个 URL 来使用功能。
 # Environment Request
 Java Runtime (class file version 52.0+) (Java 8+)  
+# Compile Notification
+需在 Build Path 内添加 External Jars: https://github.com/atarw/material-ui-swing  
 # Credit
 文件下载及保存的方法 参考了 https://blog.csdn.net/qq_38022616/article/details/90297124  
 读取网页内容并输出的方法 参考了 https://jingyan.baidu.com/article/c45ad29c17f616051653e27c.html  
