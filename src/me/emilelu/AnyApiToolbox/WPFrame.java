@@ -77,6 +77,7 @@ public class WPFrame extends JFrame {
 			ButtonGroup bg = new ButtonGroup();
 			bg.add(pc);
 			bg.add(mb);
+			pc.setSelected(true);
 			p.add(pc);
 			p.add(mb);
 		}
@@ -115,7 +116,7 @@ public class WPFrame extends JFrame {
 					setExtendedState(JFrame.MAXIMIZED_BOTH);
 					for (int i = 0; i < Integer.parseInt(times.getText()); i++) {
 						SimpleDateFormat df = new SimpleDateFormat("yy.MM.dd-HH.mm.ss.SSS");
-						String filename = theDirectory + df.format(new Date()) + ".jpg";
+						String filename = theDirectory + "/" + df.format(new Date()) + ".jpg";
 
 						if (what == 6 || what == 7 || what == 8) {
 							if (pc.isSelected()) {

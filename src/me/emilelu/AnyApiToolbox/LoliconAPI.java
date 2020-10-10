@@ -153,7 +153,7 @@ public class LoliconAPI extends JFrame {
 				File file = volume.getSelectedFile();
 				if (file == null) {
 				} else {
-					theDirectory = file.getAbsolutePath();
+					theDirectory = file.getAbsolutePath() + "/";
 					yourVol.setText(theDirectory);
 					panel.add(yourVol);
 					panel.updateUI();
@@ -202,7 +202,7 @@ public class LoliconAPI extends JFrame {
 						}
 
 						SimpleDateFormat df = new SimpleDateFormat("yy.MM.dd-HH.mm.ss.SSS");
-						String inputPath2 = theDirectory + "/HentaiLogs-" + df.format(new Date()) + ".txt";
+						String inputPath2 = theDirectory + "HentaiLogs-" + df.format(new Date()) + ".txt";
 						List<String> hentaiLogs = new ArrayList<String>();
 
 						for (int i = 0; i < Integer.parseInt(timesR.getText()); i++) {

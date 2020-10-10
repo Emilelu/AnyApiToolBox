@@ -49,7 +49,7 @@ class GST extends Thread {
 
 }
 
-//A Thread of LoliconAPI
+// A Thread of LoliconAPI
 class LLC extends Thread {
 
 	public void run() {
@@ -86,7 +86,7 @@ public class Main extends JFrame {
 	private static final long serialVersionUID = 5583924409602041567L;
 
 	public Main() throws UnsupportedLookAndFeelException {
-		super("AnyApiToolBox | 0.3.0-beta");
+		super("AnyApiToolBox | 0.3.1-beta");
 		UIManager.setLookAndFeel(new MaterialLookAndFeel(new MaterialOrientalFontsTheme()));
 		this.setIconImage(new ImageIcon("./icon.png").getImage());
 
