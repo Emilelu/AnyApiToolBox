@@ -176,7 +176,7 @@ public class LoliconAPI extends JFrame {
 						if (yourKey.getText().equals("")) {
 							theAPI = theAPI + "?";
 						} else {
-							theAPI = theAPI + "?apikey=" + apiKey;
+							theAPI = theAPI + "?apikey=" + yourKey.getText();
 						}
 
 						if (allage.isSelected()) {
@@ -200,7 +200,7 @@ public class LoliconAPI extends JFrame {
 						if (yes3.isSelected()) {
 							isDetails = true;
 						}
-
+//						System.out.println(theAPI);
 						SimpleDateFormat df = new SimpleDateFormat("yy.MM.dd-HH.mm.ss.SSS");
 						String inputPath2 = theDirectory + "HentaiLogs-" + df.format(new Date()) + ".txt";
 						List<String> hentaiLogs = new ArrayList<String>();
